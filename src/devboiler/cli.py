@@ -9,6 +9,12 @@ from .api import (
     create_html_page,
     create_react_component,
     create_project,
+    create_flask_app,
+    create_fastapi_app,
+    create_node_script,
+    create_express_app,
+    create_python_cli,
+    create_react_component_with_css,
 )
 
 
@@ -18,8 +24,46 @@ def _add_common_create_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--force", action="store_true", help="Overwrite existing files")
 
 
+AVAILABLE_BOILERPLATES = [
+    ("python-class", "Python class file", "devboiler create python-class User"),
+    ("html", "HTML page", "devboiler create html index --title 'My Homepage'"),
+    ("react-component", "React component (function/class)", "devboiler create react-component Navbar --type function"),
+    ("project", "Project skeleton (python)", "devboiler create project my_app --type python"),
+    ("flask-app", "Flask app (app.py)", "devboiler create flask-app my_flask --directory ."),
+    ("fastapi-app", "FastAPI app (main.py)", "devboiler create fastapi-app my_api --directory ."),
+    ("node-script", "Node.js script (index.js)", "devboiler create node-script my_script --directory ."),
+    ("express-app", "Express.js app (server.js)", "devboiler create express-app my_express --directory ."),
+    ("python-cli", "Python CLI with argparse", "devboiler create python-cli my_cli --directory ."),
+    ("react-component-css", "React component + CSS module", "devboiler create react-component-css Navbar --directory ."),
+]
+
+
+def _build_epilog() -> str:
+    lines = [
+        "Examples:",
+        "  devboiler create python-class User",
+        "  devboiler create html index --title 'My Homepage'",
+        "  devboiler create react-component Navbar --type function",
+        "  devboiler create project my_app --type python",
+        "  devboiler create flask-app my_flask",
+        "  devboiler create fastapi-app my_api",
+        "  devboiler create node-script my_script",
+        "  devboiler create express-app my_express",
+        "  devboiler create python-cli my_cli",
+        "  devboiler create react-component-css Navbar",
+        "",
+        "See 'devboiler list' for all boilerplates.",
+    ]
+    return "\n".join(lines)
+
+
 def _parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="devboiler", description="Generate boilerplates quickly")
+    p = argparse.ArgumentParser(
+        prog="devboiler",
+        description="Generate boilerplates quickly",
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog=_build_epilog(),
+    )
     sub = p.add_subparsers(dest="command", required=True)
 
     # create group
@@ -46,6 +90,39 @@ def _parser() -> argparse.ArgumentParser:
     p_proj = sub_create.add_parser("project", help="Create a project skeleton")
     _add_common_create_args(p_proj)
     p_proj.add_argument("--type", choices=["python"], default="python")
+
+    # flask-app
+    p_flask = sub_create.add_parser("flask-app", help="Create a minimal Flask app (app.py)")
+    _add_common_create_args(p_flask)
+    p_flask.add_argument("--filename", default="app.py", help="Output filename (default: app.py)")
+
+    # fastapi-app
+    p_fastapi = sub_create.add_parser("fastapi-app", help="Create a minimal FastAPI app (main.py)")
+    _add_common_create_args(p_fastapi)
+    p_fastapi.add_argument("--filename", default="main.py", help="Output filename (default: main.py)")
+
+    # node-script
+    p_node = sub_create.add_parser("node-script", help="Create a Node.js script (index.js)")
+    _add_common_create_args(p_node)
+    p_node.add_argument("--filename", default="index.js", help="Output filename (default: index.js)")
+
+    # express-app
+    p_express = sub_create.add_parser("express-app", help="Create an Express.js app (server.js)")
+    _add_common_create_args(p_express)
+    p_express.add_argument("--filename", default="server.js", help="Output filename (default: server.js)")
+
+    # python-cli
+    p_pycli = sub_create.add_parser("python-cli", help="Create a Python CLI app (argparse)")
+    _add_common_create_args(p_pycli)
+    p_pycli.add_argument("--filename", default="cli.py", help="Output filename (default: cli.py)")
+
+    # react-component-css
+    p_rcc = sub_create.add_parser("react-component-css", help="Create React component with CSS module")
+    _add_common_create_args(p_rcc)
+    p_rcc.add_argument("--ext", default="jsx", help="Component file extension (default: jsx)")
+
+    # list command
+    p_list = sub.add_parser("list", help="List available boilerplates")
 
     return p
 
@@ -98,6 +175,75 @@ def main(argv: list[str] | None = None) -> int:
             for p in paths:
                 print(str(p))
             return 0
+
+        if args.create_type == "flask-app":
+            path = create_flask_app(
+                args.name,
+                filename=args.filename,
+                directory=out_dir,
+                force=args.force,
+            )
+            print(str(path))
+            return 0
+
+        if args.create_type == "fastapi-app":
+            path = create_fastapi_app(
+                args.name,
+                filename=args.filename,
+                directory=out_dir,
+                force=args.force,
+            )
+            print(str(path))
+            return 0
+
+        if args.create_type == "node-script":
+            path = create_node_script(
+                args.name,
+                filename=args.filename,
+                directory=out_dir,
+                force=args.force,
+            )
+            print(str(path))
+            return 0
+
+        if args.create_type == "express-app":
+            path = create_express_app(
+                args.name,
+                filename=args.filename,
+                directory=out_dir,
+                force=args.force,
+            )
+            print(str(path))
+            return 0
+
+        if args.create_type == "python-cli":
+            path = create_python_cli(
+                args.name,
+                filename=args.filename,
+                directory=out_dir,
+                force=args.force,
+            )
+            print(str(path))
+            return 0
+
+        if args.create_type == "react-component-css":
+            paths = create_react_component_with_css(
+                args.name,
+                extension=args.ext,
+                directory=out_dir,
+                force=args.force,
+            )
+            for p in paths:
+                print(str(p))
+            return 0
+
+    if args.command == "list":
+        for key, desc, example in AVAILABLE_BOILERPLATES:
+            print(f"{key:20} - {desc}")
+        print("\nExamples:")
+        for _, __, example in AVAILABLE_BOILERPLATES:
+            print(f"  {example}")
+        return 0
 
     return 1
 

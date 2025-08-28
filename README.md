@@ -1,40 +1,85 @@
 # devboiler
 
-Szybki generator boilerplatów (szablonów startowych) dla programów, stron internetowych i komponentów. Dostępny jako biblioteka Pythonowa oraz CLI.
+Fast boilerplate generator for applications, web pages, and components. Use it as a Python library and a CLI.
 
-## Instalacja
+## Installation
 
 ```bash
 pip install devboiler
 ```
 
-## Użycie (CLI)
+## CLI usage
+
+List all available boilerplates:
 
 ```bash
-# stworzenie pustej klasy Python
-devboiler create python-class User
-
-# stworzenie pliku HTML z boilerplatem
-devboiler create html index --title "My Homepage"
-
-# stworzenie React komponentu
-devboiler create react-component Navbar --type function
-
-# stworzenie struktury projektu w Pythonie
-devboiler create project my_app --type python
+devboiler list
 ```
 
-## Użycie (Python API)
+Quick examples:
+
+```bash
+# Python class
+devboiler create python-class User
+
+# HTML page
+devboiler create html index --title "My Homepage"
+
+# React component (function or class)
+devboiler create react-component Navbar --type function
+
+# Python project skeleton
+devboiler create project my_app --type python
+
+# Flask app (app.py)
+devboiler create flask-app my_flask
+
+# FastAPI app (main.py)
+devboiler create fastapi-app my_api
+
+# Node.js script (index.js)
+devboiler create node-script my_script
+
+# Express.js app (server.js)
+devboiler create express-app my_express
+
+# Python CLI (argparse)
+devboiler create python-cli my_cli
+
+# React component with CSS module
+devboiler create react-component-css Navbar
+```
+
+Get help with examples:
+
+```bash
+devboiler --help
+```
+
+## Python API
 
 ```python
-from devboiler import create_python_class, create_html_page
+from devboiler import (
+    create_python_class,
+    create_html_page,
+    create_react_component,
+    create_project,
+    create_flask_app,
+    create_fastapi_app,
+    create_node_script,
+    create_express_app,
+    create_python_cli,
+    create_react_component_with_css,
+)
 
 create_python_class("User")
 create_html_page("index", title="My Homepage")
+create_react_component("Navbar", type="function")
+create_project("my_app", type="python")
 ```
 
-## Rozszerzanie
-Szablony znajdują się w `devboiler/templates`. Możesz dodać własne lub zmodyfikować istniejące.
+## Extending
+Templates live under `devboiler/templates`. Add or customize them to fit your needs.
 
-## Licencja
+## License
 MIT

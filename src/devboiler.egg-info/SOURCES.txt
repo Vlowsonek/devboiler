@@ -11,9 +11,16 @@ src/devboiler.egg-info/dependency_links.txt
 src/devboiler.egg-info/entry_points.txt
 src/devboiler.egg-info/requires.txt
 src/devboiler.egg-info/top_level.txt
+src/devboiler/templates/express/server.js.j2
+src/devboiler/templates/fastapi/main.py.j2
+src/devboiler/templates/flask/app.py.j2
 src/devboiler/templates/html/page.html.j2
+src/devboiler/templates/node/index.js.j2
 src/devboiler/templates/project/python/init.py.j2
 src/devboiler/templates/project/python/main.py.j2
 src/devboiler/templates/python/class.py.j2
+src/devboiler/templates/python/cli.py.j2
 src/devboiler/templates/react/component_class.jsx.j2
+src/devboiler/templates/react/component_css.module.css.j2
 src/devboiler/templates/react/component_function.jsx.j2
+src/devboiler/templates/react/component_with_css.jsx.j2

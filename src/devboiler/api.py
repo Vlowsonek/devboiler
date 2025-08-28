@@ -149,3 +149,98 @@ def create_project(
     return files_created
 
 
+def create_flask_app(
+    name: str,
+    *,
+    filename: str = "app.py",
+    directory: Path | str = ".",
+    force: bool = False,
+) -> Path:
+    """Create a minimal Flask app file."""
+    directory_path = Path(directory) / name
+    output_path = directory_path / filename
+    content = _render_template("flask/app.py.j2", {"app_name": name})
+    return _write_text_file(output_path, content, force=force)
+
+
+def create_fastapi_app(
+    name: str,
+    *,
+    filename: str = "main.py",
+    directory: Path | str = ".",
+    force: bool = False,
+) -> Path:
+    """Create a minimal FastAPI app file."""
+    directory_path = Path(directory) / name
+    output_path = directory_path / filename
+    content = _render_template("fastapi/main.py.j2", {"app_name": name})
+    return _write_text_file(output_path, content, force=force)
+
+
+def create_node_script(
+    name: str,
+    *,
+    filename: str = "index.js",
+    directory: Path | str = ".",
+    force: bool = False,
+) -> Path:
+    """Create a simple Node.js script."""
+    directory_path = Path(directory) / name
+    output_path = directory_path / filename
+    content = _render_template("node/index.js.j2", {"script_name": name})
+    return _write_text_file(output_path, content, force=force)
+
+
+def create_express_app(
+    name: str,
+    *,
+    filename: str = "server.js",
+    directory: Path | str = ".",
+    force: bool = False,
+) -> Path:
+    """Create a minimal Express.js app."""
+    directory_path = Path(directory) / name
+    output_path = directory_path / filename
+    content = _render_template("express/server.js.j2", {"app_name": name})
+    return _write_text_file(output_path, content, force=force)
+
+
+def create_python_cli(
+    name: str,
+    *,
+    filename: str = "cli.py",
+    directory: Path | str = ".",
+    force: bool = False,
+) -> Path:
+    """Create a Python CLI using argparse."""
+    directory_path = Path(directory) / name
+    output_path = directory_path / filename
+    content = _render_template("python/cli.py.j2", {"cli_name": name})
+    return _write_text_file(output_path, content, force=force)
+
+
+def create_react_component_with_css(
+    name: str,
+    *,
+    extension: str = "jsx",
+    directory: Path | str = ".",
+    force: bool = False,
+) -> list[Path]:
+    """Create a React component with a CSS module side-by-side."""
+    directory_path = Path(directory)
+    component_path = directory_path / f"{name}.{extension}"
+    css_path = directory_path / f"{name}.module.css"
+
+    component_content = _render_template(
+        "react/component_with_css.jsx.j2", {"component_name": name}
+    )
+    css_content = _render_template(
+        "react/component_css.module.css.j2", {"component_name": name}
+    )
+    created = [
+        _write_text_file(component_path, component_content, force=force),
+        _write_text_file(css_path, css_content, force=force),
+    ]
+    return created
+
+

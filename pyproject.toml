@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "devboiler"
-version = "0.1.0"
+version = "0.2.0"
 description = "Generate boilerplate for apps, web pages, and components."
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"
 authors = [
-  { name = "devboiler authors" }
+  { name = "mir0swag, kotekfrozi" }
 ]
 keywords = ["boilerplate", "scaffold", "cli", "templates", "generator"]
 classifiers = [
@@ -25,8 +25,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = ""
-Repository = "https://github.com/Vlowsonek/devboiler"
+Homepage = "https://github.com/mir0swag/devboiler"
+Repository = "https://github.com/mir0swag/devboiler"
 
 [project.scripts]
 devboiler = "devboiler.cli:main"
