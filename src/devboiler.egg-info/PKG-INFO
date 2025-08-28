@@ -1,0 +1,60 @@
+Metadata-Version: 2.4
+Name: devboiler
+Version: 0.1.0
+Summary: Generate boilerplate for apps, web pages, and components.
+Author: devboiler authors
+License-Expression: MIT
+Project-URL: Homepage, https://example.com/devboiler
+Project-URL: Repository, https://example.com/devboiler/repo
+Keywords: boilerplate,scaffold,cli,templates,generator
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Operating System :: OS Independent
+Classifier: Environment :: Console
+Classifier: Topic :: Software Development :: Code Generators
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: Jinja2>=3.1
+Dynamic: license-file
+
+# devboiler
+
+Szybki generator boilerplatów (szablonów startowych) dla programów, stron internetowych i komponentów. Dostępny jako biblioteka Pythonowa oraz CLI.
+
+## Instalacja
+
+```bash
+pip install devboiler
+```
+
+## Użycie (CLI)
+
+```bash
+# stworzenie pustej klasy Python
+devboiler create python-class User
+
+# stworzenie pliku HTML z boilerplatem
+devboiler create html index --title "My Homepage"
+
+# stworzenie React komponentu
+devboiler create react-component Navbar --type function
+
+# stworzenie struktury projektu w Pythonie
+devboiler create project my_app --type python
+```
+
+## Użycie (Python API)
+
+```python
+from devboiler import create_python_class, create_html_page
+
+create_python_class("User")
+create_html_page("index", title="My Homepage")
+```
+
+## Rozszerzanie
+Szablony znajdują się w `devboiler/templates`. Możesz dodać własne lub zmodyfikować istniejące.
+
+## Licencja
+MIT
