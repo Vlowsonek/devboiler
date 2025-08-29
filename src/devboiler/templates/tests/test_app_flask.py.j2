@@ -1,0 +1,9 @@
+from {{ project_name }}.app import app
+
+
+def test_root():
+    with app.test_client() as client:
+        resp = client.get("/")
+        assert resp.status_code == 200
+
+

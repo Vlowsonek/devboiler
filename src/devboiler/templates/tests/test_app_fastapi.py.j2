@@ -1,0 +1,11 @@
+from fastapi.testclient import TestClient
+from {{ project_name }}.main import app
+
+
+def test_root():
+    client = TestClient(app)
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert "message" in resp.json()
+
+

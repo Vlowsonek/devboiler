@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Optional
 
 from .api import (
     create_python_class,
@@ -15,6 +16,7 @@ from .api import (
     create_express_app,
     create_python_cli,
     create_react_component_with_css,
+    scaffold_project,
 )
 
 
@@ -65,6 +67,18 @@ def _parser() -> argparse.ArgumentParser:
         epilog=_build_epilog(),
     )
     sub = p.add_subparsers(dest="command", required=True)
+
+    # new (wizard) group
+    p_new = sub.add_parser("new", help="Interactive project wizard")
+    p_new.add_argument("name", nargs="?", help="Project name")
+    p_new.add_argument("--framework", choices=["fastapi", "flask", "express", "python"], help="Framework preset")
+    p_new.add_argument("--db", choices=["none", "postgres"], default="none", help="Database selection (default: none)")
+    p_new.add_argument("--docker", action="store_true", help="Include Dockerfile and docker-compose")
+    p_new.add_argument("--tests", action="store_true", help="Include basic tests (pytest)")
+    p_new.add_argument("--linters", action="store_true", help="Include basic linter configs (.flake8)")
+    p_new.add_argument("--directory", "-d", default=".", help="Output directory (default: current)")
+    p_new.add_argument("--force", action="store_true", help="Overwrite existing files")
+    p_new.add_argument("--non-interactive", action="store_true", help="Do not prompt; require options via flags")
 
     # create group
     p_create = sub.add_parser("create", help="Create a boilerplate resource")
@@ -129,6 +143,65 @@ def _parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+
+    if args.command == "new":
+        def _prompt(text: str, default: Optional[str] = None) -> str:
+            if args.non_interactive:
+                if default is None:
+                    raise SystemExit(f"Missing required option: {text}")
+                return default
+            prompt_text = f"{text}"
+            if default:
+                prompt_text += f" [{default}]"
+            prompt_text += ": "
+            value = input(prompt_text).strip()
+            return value or (default or "")
+
+        def _prompt_choice(text: str, choices: list[str], default: Optional[str] = None) -> str:
+            if args.non_interactive and getattr(args, text, None) is None and default is None:
+                raise SystemExit(f"Missing required option: --{text}")
+            if getattr(args, text, None):
+                return getattr(args, text)
+            if args.non_interactive:
+                return default or choices[0]
+            choices_str = "/".join(choices)
+            while True:
+                value = _prompt(f"{text} ({choices_str})", default)
+                if value in choices:
+                    return value
+                print(f"Please choose one of: {choices_str}")
+
+        def _prompt_bool(text: str, default: bool = False) -> bool:
+            if args.non_interactive:
+                return getattr(args, text.replace(" ", "_"), default)
+            suffix = "Y/n" if default else "y/N"
+            value = _prompt(f"{text}? ({suffix})", "y" if default else "n").lower()
+            return value.startswith("y")
+
+        project_name = args.name or _prompt("Project name")
+        if not project_name:
+            print("Project name is required")
+            return 1
+
+        framework = args.framework or _prompt_choice("framework", ["fastapi", "flask", "express", "python"], "fastapi")
+        db = args.db or _prompt_choice("db", ["none", "postgres"], "none")
+        include_docker = args.docker or _prompt_bool("Include Docker", True)
+        include_tests = args.tests or _prompt_bool("Include tests (pytest)", True)
+        include_linters = args.linters or _prompt_bool("Include linters (.flake8)", True)
+
+        created_paths = scaffold_project(
+            name=project_name,
+            framework=framework,
+            db=db,
+            include_docker=include_docker,
+            include_tests=include_tests,
+            include_linters=include_linters,
+            directory=Path(args.directory),
+            force=args.force,
+        )
+        for pth in created_paths:
+            print(str(pth))
+        return 0
 
     if args.command == "create":
         out_dir = Path(args.directory)

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0
+
+- CLI:
+  - New `devboiler new` interactive wizard (framework, DB, Docker, tests, linters)
+- API:
+  - Added `scaffold_project` high-level generator
+- Templates:
+  - Docker: `Dockerfile` and `docker-compose.yml` for Python and Node/Express
+  - Tests: pytest samples for FastAPI, Flask, Python
+  - Linters: basic `.flake8`
+- Docs:
+  - README updated with wizard examples and `scaffold_project`
+
 ## 0.2.0
 
 - Features:

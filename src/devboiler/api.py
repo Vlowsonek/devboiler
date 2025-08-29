@@ -244,3 +244,155 @@ def create_react_component_with_css(
     return created
 
 
+
+def scaffold_project(
+    *,
+    name: str,
+    framework: str = "fastapi",
+    db: str = "none",
+    include_docker: bool = True,
+    include_tests: bool = True,
+    include_linters: bool = True,
+    directory: Path | str = ".",
+    force: bool = False,
+) -> List[Path]:
+    """High-level project scaffolding with optional Docker, tests, and linters.
+
+    Args:
+        name: Project name (also used as python package name where applicable).
+        framework: One of {fastapi, flask, express, python}.
+        db: Database preset (currently informational; reserved for future). {none, postgres}.
+        include_docker: Generate Dockerfile and docker-compose.
+        include_tests: Generate sample tests (pytest for python-based frameworks).
+        include_linters: Generate basic linter config (.flake8 for python-based frameworks).
+        directory: Output parent directory.
+        force: Overwrite files if they already exist.
+
+    Returns:
+        List of created file paths.
+    """
+    root = Path(directory)
+    files_created: List[Path] = []
+
+    # Base app by framework
+    if framework == "fastapi":
+        files_created.append(create_fastapi_app(name, directory=root, force=force))
+    elif framework == "flask":
+        files_created.append(create_flask_app(name, directory=root, force=force))
+    elif framework == "express":
+        files_created.append(create_express_app(name, directory=root, force=force))
+    elif framework == "python":
+        files_created.extend(create_project(name, type="python", directory=root, force=force))
+    else:
+        raise ValueError(f"Unsupported framework: {framework}")
+
+    project_root = root / name
+
+    # README with quickstart
+    quickstart_lines: list[str] = [
+        f"# {name}",
+        "",
+        f"Generated with devboiler (framework: {framework}).",
+        "",
+    ]
+    if framework in ("fastapi", "flask"):
+        run_hint = (
+            f"uvicorn {name}.main:app --host 0.0.0.0 --port 8000"
+            if framework == "fastapi"
+            else f"flask --app {name}.app run --host=0.0.0.0 --port=8000"
+        )
+        quickstart_lines += [
+            "## Run locally",
+            "```bash",
+            f"{run_hint}",
+            "```",
+        ]
+    elif framework == "express":
+        quickstart_lines += [
+            "## Run locally",
+            "```bash",
+            f"node {name}/server.js",
+            "```",
+        ]
+    else:
+        quickstart_lines += [
+            "## Run locally",
+            "```bash",
+            f"python {name}/main.py",
+            "```",
+        ]
+
+    files_created.append(
+        _write_text_file(project_root / "README.md", "\n".join(quickstart_lines) + "\n", force=force)
+    )
+
+    # Docker
+    if include_docker:
+        if framework in ("fastapi", "flask", "python"):
+            dockerfile = _render_template(
+                "docker/Dockerfile.python.j2",
+                {"project_name": name, "framework": framework},
+            )
+            compose = _render_template(
+                "docker/docker-compose.python.yml.j2",
+                {"project_name": name, "framework": framework},
+            )
+        elif framework == "express":
+            dockerfile = _render_template(
+                "docker/Dockerfile.node.j2", {"project_name": name}
+            )
+            compose = _render_template(
+                "docker/docker-compose.node.yml.j2", {"project_name": name}
+            )
+        else:
+            dockerfile = ""
+            compose = ""
+
+        if dockerfile:
+            files_created.append(
+                _write_text_file(project_root / "Dockerfile", dockerfile, force=force)
+            )
+        if compose:
+            files_created.append(
+                _write_text_file(project_root / "docker-compose.yml", compose, force=force)
+            )
+
+    # Tests (python frameworks only)
+    if include_tests and framework in ("fastapi", "flask", "python"):
+        tests_dir = project_root / "tests"
+        tests_dir.mkdir(parents=True, exist_ok=True)
+        if framework == "fastapi":
+            test_content = _render_template(
+                "tests/test_app_fastapi.py.j2", {"project_name": name}
+            )
+            files_created.append(
+                _write_text_file(tests_dir / "test_root.py", test_content, force=force)
+            )
+        elif framework == "flask":
+            test_content = _render_template(
+                "tests/test_app_flask.py.j2", {"project_name": name}
+            )
+            files_created.append(
+                _write_text_file(tests_dir / "test_root.py", test_content, force=force)
+            )
+        else:
+            test_content = _render_template(
+                "tests/test_app_python.py.j2", {"project_name": name}
+            )
+            files_created.append(
+                _write_text_file(tests_dir / "test_main.py", test_content, force=force)
+            )
+
+        pytest_ini = _render_template("tests/pytest.ini.j2", {})
+        files_created.append(
+            _write_text_file(project_root / "pytest.ini", pytest_ini, force=force)
+        )
+
+    # Linters (python only for now)
+    if include_linters and framework in ("fastapi", "flask", "python"):
+        flake8 = _render_template("linters/flake8.j2", {})
+        files_created.append(
+            _write_text_file(project_root / ".flake8", flake8, force=force)
+        )
+
+    return files_created

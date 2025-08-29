@@ -50,6 +50,16 @@ devboiler create python-cli my_cli
 devboiler create react-component-css Navbar
 ```
 
+Interactive wizard:
+
+```bash
+# Fully interactive (prompts for framework, docker, tests, linters)
+devboiler new
+
+# Non-interactive with flags
+devboiler new my_app --framework fastapi --db none --docker --tests --linters
+```
+
 Get help with examples:
 
 ```bash
@@ -70,12 +80,23 @@ from devboiler import (
     create_express_app,
     create_python_cli,
     create_react_component_with_css,
+    scaffold_project,
 )
 
 create_python_class("User")
 create_html_page("index", title="My Homepage")
 create_react_component("Navbar", type="function")
 create_project("my_app", type="python")
+
+# High-level scaffold
+scaffold_project(
+    name="my_service",
+    framework="fastapi",
+    db="none",
+    include_docker=True,
+    include_tests=True,
+    include_linters=True,
+)
 ```
 
 ## Extending

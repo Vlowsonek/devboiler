@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    command: >
+      sh -c "if [ -f {{ project_name }}/main.py ]; then python {{ project_name }}/main.py; \
+      elif [ -f {{ project_name }}/app.py ]; then python {{ project_name }}/app.py; \
+      else python -m http.server 8000; fi"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+
+
