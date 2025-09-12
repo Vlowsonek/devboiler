@@ -76,6 +76,9 @@ def _parser() -> argparse.ArgumentParser:
     p_new.add_argument("--docker", action="store_true", help="Include Dockerfile and docker-compose")
     p_new.add_argument("--tests", action="store_true", help="Include basic tests (pytest)")
     p_new.add_argument("--linters", action="store_true", help="Include basic linter configs (.flake8)")
+    p_new.add_argument("--ci", action="store_true", help="Include GitHub Actions CI workflow")
+    p_new.add_argument("--pre-commit", dest="pre_commit", action="store_true", help="Include .pre-commit-config.yaml")
+    p_new.add_argument("--package-manager", choices=["pip", "poetry"], default="pip", help="Python package manager")
     p_new.add_argument("--directory", "-d", default=".", help="Output directory (default: current)")
     p_new.add_argument("--force", action="store_true", help="Overwrite existing files")
     p_new.add_argument("--non-interactive", action="store_true", help="Do not prompt; require options via flags")
@@ -188,6 +191,9 @@ def main(argv: list[str] | None = None) -> int:
         include_docker = args.docker or _prompt_bool("Include Docker", True)
         include_tests = args.tests or _prompt_bool("Include tests (pytest)", True)
         include_linters = args.linters or _prompt_bool("Include linters (.flake8)", True)
+        include_ci = args.ci or _prompt_bool("Include CI (GitHub Actions)", True)
+        include_pre_commit = args.pre_commit or _prompt_bool("Include pre-commit", True)
+        package_manager = args.package_manager or _prompt_choice("package_manager", ["pip", "poetry"], "pip")
 
         created_paths = scaffold_project(
             name=project_name,
@@ -198,6 +204,9 @@ def main(argv: list[str] | None = None) -> int:
             include_linters=include_linters,
             directory=Path(args.directory),
             force=args.force,
+            include_ci=include_ci,
+            include_pre_commit=include_pre_commit,
+            package_manager=package_manager,
         )
         for pth in created_paths:
             print(str(pth))

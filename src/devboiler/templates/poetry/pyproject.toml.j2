@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = ""
+authors = ["you <you@example.com>"]
+readme = "README.md"
+packages = [
+  { include = "{{ project_name }}" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+fastapi = { version = "^0.115.0", optional = true }
+flask = { version = "^3.0.0", optional = true }
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+flake8 = "^7.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

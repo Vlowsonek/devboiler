@@ -2,6 +2,9 @@
 
 Fast boilerplate generator for applications, web pages, and components. Use it as a Python library and a CLI.
 
+- Bold defaults, clean structure, and production-friendly options
+- New in 0.4.0: optional CI, pre-commit, and Poetry support
+
 ## Installation
 
 ```bash
@@ -53,11 +56,19 @@ devboiler create react-component-css Navbar
 Interactive wizard:
 
 ```bash
-# Fully interactive (prompts for framework, docker, tests, linters)
+# Fully interactive (prompts for framework, docker, tests, linters, ci, pre-commit, poetry)
 devboiler new
 
-# Non-interactive with flags
-devboiler new my_app --framework fastapi --db none --docker --tests --linters
+# Non-interactive with flags (0.4.0)
+devboiler new my_app \
+  --framework fastapi \
+  --db none \
+  --docker \
+  --tests \
+  --linters \
+  --ci \
+  --pre-commit \
+  --package-manager poetry
 ```
 
 Get help with examples:
@@ -96,11 +107,24 @@ scaffold_project(
     include_docker=True,
     include_tests=True,
     include_linters=True,
+    include_ci=True,                # 0.4.0
+    include_pre_commit=True,        # 0.4.0
+    package_manager="poetry",       # 0.4.0 (pip|poetry)
 )
 ```
 
+## CI, pre-commit, Poetry (0.4.0)
+
+When enabled in the wizard/API for Python-based projects (FastAPI, Flask, pure Python):
+
+- CI: a GitHub Actions workflow is generated at `.github/workflows/ci.yml` with a Python matrix and optional lint/test steps.
+- pre-commit: `.pre-commit-config.yaml` with Black, isort, Flake8, and MyPy.
+- Poetry: `pyproject.toml` suitable for starting with Poetry.
+
 ## Extending
+
 Templates live under `devboiler/templates`. Add or customize them to fit your needs.
 
 ## License
+
 MIT

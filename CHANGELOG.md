@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0
+
+- CI/CD & DevOps:
+  - New GitHub Actions workflow template for Python projects (`.github/workflows/ci.yml`)
+  - Optional generation via wizard flags
+- Tooling:
+  - `pre-commit` support with Black, isort, Flake8, MyPy
+  - Optional Poetry `pyproject.toml` template
+- CLI & API:
+  - Wizard flags: `--ci`, `--pre-commit`, `--package-manager {pip|poetry}`
+  - `scaffold_project` extended with `include_ci`, `include_pre_commit`, `package_manager`
+- Docs:
+  - README updated with 0.4.0 features and visuals
+
 ## 0.3.0
 
 - CLI:
